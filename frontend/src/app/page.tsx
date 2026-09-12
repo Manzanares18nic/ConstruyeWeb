@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
+import HomeHeroBanner from '@/components/HomeHeroBanner';
 import {
   obtenerProductos,
   obtenerCategorias,
@@ -8,7 +9,6 @@ import {
 } from '@/lib/api';
 import {
   Wrench,
-  Sparkles,
   SlidersHorizontal,
   X,
   Layers,
@@ -48,39 +48,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="pb-16">
-      {/* Hero Banner Ferretero (Solo en la portada sin filtros) */}
-      {!hayFiltrosActivos && (
-        <section className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 text-white py-12 md:py-16 border-b border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" /> Ferretería Construye en Línea
-              </div>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-                Herramientas y Materiales para Proyectos Reales
-              </h1>
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                Catálogo conectado con stock en tiempo real en nuestra bodega central de Managua.
-                Herramientas de uso rudo, tornillería por mayor y acabados de primera calidad.
-              </p>
-              <div className="pt-2 flex flex-wrap items-center gap-3">
-                <Link
-                  href="/?categoria=herramientas-electricas"
-                  className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-sm transition-colors inline-flex items-center gap-2"
-                >
-                  <Wrench className="w-4 h-4" /> Ver Herramientas Eléctricas
-                </Link>
-                <Link
-                  href="/?categoria=herramientas-manuales"
-                  className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold rounded-lg text-sm transition-colors border border-slate-700"
-                >
-                  Herramientas Manuales
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Hero Banner Ferretero Profesional (Inspirado en Ace Hardware) */}
+      {!hayFiltrosActivos && <HomeHeroBanner />}
 
       {/* Barra de Marcas Principales */}
       <section className="bg-white border-b border-slate-200 py-4">

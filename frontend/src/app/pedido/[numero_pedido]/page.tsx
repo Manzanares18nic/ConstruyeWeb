@@ -2,6 +2,7 @@
 
 import React, { use } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   CheckCircle2,
   Package,
@@ -143,19 +144,29 @@ export default function PedidoDetallePage({ params }: PedidoPageProps) {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print:border-none print:shadow-none">
         {/* Cabecera Comercial */}
         <div className="bg-slate-950 text-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xl sm:text-2xl font-black tracking-tight">
-                CONSTRUYE<span className="text-amber-500">WEB</span>
-              </span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-slate-800 text-slate-300 rounded-md border border-slate-700">
-                Ferretería & Materiales
-              </span>
+          <div className="flex items-center gap-3.5">
+            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white p-1 shadow-xs shrink-0 border border-slate-700">
+              <Image
+                src="/logo.jpeg"
+                alt="Ferretería Construye Logo"
+                fill
+                className="object-contain p-0.5"
+              />
             </div>
-            <p className="text-xs text-slate-400">
-              RUC: J0310000008899 | Sucursal Central, Carretera Norte Km 4.5, Managua
-            </p>
-            <p className="text-xs text-slate-400">Tel: +505 2222-3333 | ventas@construyeweb.com</p>
+            <div>
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-xl sm:text-2xl font-black tracking-tight">
+                  CONSTRUYE<span className="text-amber-500">WEB</span>
+                </span>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-slate-800 text-slate-300 rounded-md border border-slate-700">
+                  Ferretería & Materiales
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                RUC: J0310000008899 | Sucursal Central, Carretera Norte Km 4.5, Managua
+              </p>
+              <p className="text-xs text-slate-400">Tel: +505 2222-3333 | ventas@construyeweb.com</p>
+            </div>
           </div>
 
           <div className="sm:text-right bg-slate-900 sm:bg-transparent p-3 sm:p-0 rounded-xl border border-slate-800 sm:border-none">

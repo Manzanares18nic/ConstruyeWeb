@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   Search,
   ShoppingCart,
   User,
-  Wrench,
   Menu,
   X,
   Phone,
@@ -66,17 +66,23 @@ export default function Navbar() {
       {/* Barra principal de navegación */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4 md:gap-8">
-          {/* Logotipo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="bg-amber-500 text-slate-950 p-2 rounded-lg group-hover:bg-amber-400 transition-colors">
-              <Wrench className="w-6 h-6" />
+          {/* Logotipo Oficial */}
+          <Link href="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xs group-hover:border-amber-500 transition-all shrink-0">
+              <Image
+                src="/logo.jpeg"
+                alt="Ferretería Construye Logo"
+                fill
+                priority
+                className="object-contain p-1"
+              />
             </div>
             <div>
               <span className="text-xl font-black tracking-tight text-slate-900">
                 CONSTRUYE<span className="text-amber-600">WEB</span>
               </span>
               <span className="block text-[10px] uppercase font-bold tracking-widest text-slate-500 -mt-1">
-                Ferretería & POS
+                Ferretería y más...
               </span>
             </div>
           </Link>

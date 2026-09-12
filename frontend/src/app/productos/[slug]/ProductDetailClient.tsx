@@ -14,6 +14,9 @@ import {
   Truck,
   Store,
   Check,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
 } from 'lucide-react';
 import { ProductoDetalle } from '@/types/api';
 import { useCart } from '@/context/CartContext';
@@ -29,6 +32,17 @@ export default function ProductDetailClient({
   const [imagenSeleccionada, setImagenSeleccionada] = useState(0);
   const [cantidad, setCantidad] = useState(1);
   const [agregado, setAgregado] = useState(false);
+
+  // Estados para lupa tipo Amazon
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomCoords, setZoomCoords] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    setZoomCoords({ x, y });
+  };
 
   const handleAgregar = () => {
     if (!producto.disponible) return;
@@ -65,34 +79,86 @@ export default function ProductDetailClient({
 
       {/* Ficha principal */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* Galería de imágenes */}
+        {/* Galería de imágenes con Lupa Tipo Amazon */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="relative aspect-4/3 w-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+          <div
+            onMouseEnter={() => setIsZoomed(true)}
+            onMouseLeave={() => {
+              setIsZoomed(false);
+              setZoomCoords({ x: 50, y: 50 });
+            }}
+            onMouseMove={handleMouseMove}
+            className="relative aspect-4/3 w-full bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden group cursor-crosshair select-none"
+          >
             {imagenes[imagenSeleccionada] && (
-              <Image
-                src={imagenes[imagenSeleccionada]}
-                alt={producto.nombre}
-                fill
-                priority
-                className="object-cover"
-              />
+              <div
+                className="w-full h-full relative overflow-hidden transition-transform duration-100 ease-out"
+                style={{
+                  transform: isZoomed ? 'scale(2.25)' : 'scale(1)',
+                  transformOrigin: `${zoomCoords.x}% ${zoomCoords.y}%`,
+                }}
+              >
+                <Image
+                  src={imagenes[imagenSeleccionada]}
+                  alt={producto.nombre}
+                  fill
+                  priority
+                  className="object-cover pointer-events-none"
+                />
+              </div>
             )}
-            <span className="absolute top-3 left-3 bg-slate-900 text-white text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider">
+
+            {/* Badge de Marca */}
+            <span className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-xs text-white text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider z-10 pointer-events-none shadow-xs">
               {producto.marca.nombre}
             </span>
+
+            {/* Botones Prev / Next estilo Amazon/Ace Hardware */}
+            {imagenes.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setImagenSeleccionada((prev) => (prev > 0 ? prev - 1 : imagenes.length - 1));
+                  }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md text-slate-800 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10 cursor-pointer"
+                  aria-label="Imagen anterior"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setImagenSeleccionada((prev) => (prev < imagenes.length - 1 ? prev + 1 : 0));
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md text-slate-800 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10 cursor-pointer"
+                  aria-label="Imagen siguiente"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Indicador de Lupa tipo Amazon */}
+          <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium">
+            <ZoomIn className="w-4 h-4 text-amber-600" />
+            <span>Pasa el cursor sobre la imagen para ampliar los detalles</span>
           </div>
 
           {/* Miniaturas */}
           {imagenes.length > 1 && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 overflow-x-auto pb-1">
               {imagenes.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setImagenSeleccionada(idx)}
-                  className={`relative w-20 h-20 rounded-lg border overflow-hidden transition-all ${
+                  className={`relative w-20 h-20 rounded-xl border-2 overflow-hidden transition-all shrink-0 cursor-pointer ${
                     imagenSeleccionada === idx
-                      ? 'border-amber-500 ring-2 ring-amber-500/20'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-amber-500 ring-2 ring-amber-500/30 scale-105'
+                      : 'border-slate-200 hover:border-slate-400 opacity-70 hover:opacity-100'
                   }`}
                 >
                   <Image src={img} alt="" fill className="object-cover" />

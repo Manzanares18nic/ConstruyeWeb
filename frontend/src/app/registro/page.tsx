@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Wrench, Lock, Mail, User, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, User, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function RegistroPage() {
@@ -47,13 +48,24 @@ export default function RegistroPage() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl border border-slate-200 shadow-sm">
         {/* Cabecera */}
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 group mb-4">
-            <div className="bg-amber-500 text-slate-950 p-2 rounded-lg group-hover:bg-amber-400 transition-colors">
-              <Wrench className="w-6 h-6" />
+          <Link href="/" className="inline-flex items-center gap-3 group mb-4">
+            <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xs group-hover:border-amber-500 transition-all shrink-0">
+              <Image
+                src="/logo.jpeg"
+                alt="Ferretería Construye Logo"
+                fill
+                priority
+                className="object-contain p-1"
+              />
             </div>
-            <span className="text-2xl font-black tracking-tight text-slate-900">
-              CONSTRUYE<span className="text-amber-600">WEB</span>
-            </span>
+            <div className="text-left">
+              <span className="text-2xl font-black tracking-tight text-slate-900 block">
+                CONSTRUYE<span className="text-amber-600">WEB</span>
+              </span>
+              <span className="block text-[10px] uppercase font-bold tracking-widest text-slate-500 -mt-1">
+                Ferretería y más...
+              </span>
+            </div>
           </Link>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             Crear Cuenta de Cliente

@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Wrench, ShieldCheck, Truck, CreditCard, Clock, MapPin } from 'lucide-react';
+import Image from 'next/image';
+import { ShieldCheck, Truck, CreditCard, Clock, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -47,13 +48,21 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Columna 1: Marca */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="bg-amber-500 text-slate-950 p-2 rounded-lg">
-                <Wrench className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white p-1 shadow-xs shrink-0 border border-slate-700">
+                <Image
+                  src="/logo.jpeg"
+                  alt="Ferretería Construye Logo"
+                  fill
+                  className="object-contain p-0.5"
+                />
               </div>
-              <span className="text-lg font-black tracking-tight text-white">
-                CONSTRUYE<span className="text-amber-500">WEB</span>
-              </span>
+              <div>
+                <span className="text-lg font-black tracking-tight text-white block">
+                  CONSTRUYE<span className="text-amber-500">WEB</span>
+                </span>
+                <span className="text-[10px] text-slate-400 -mt-1 block">Ferretería y más...</span>
+              </div>
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
               Solución integral de inventario, punto de venta y tienda en línea para la construcción, remodelación y mantenimiento.
