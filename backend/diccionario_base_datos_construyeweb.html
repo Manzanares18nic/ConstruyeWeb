@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ConstruyeWeb — Diccionario y Arquitectura de Base de Datos</title>
+<style>
+  @page {
+    size: letter;
+    margin: 1.5cm 1.3cm 1.6cm 1.3cm;
+    @bottom-left {
+      content: "Ferretería Construye — ConstruyeWeb | Arquitectura PostgreSQL";
+      font-size: 7.5pt;
+      color: #64748b;
+      font-family: sans-serif;
+    }
+    @bottom-right {
+      content: "Página " counter(page);
+      font-size: 7.5pt;
+      color: #64748b;
+      font-family: sans-serif;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #0f172a;
+    line-height: 1.48;
+    font-size: 9pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  .cover {
+    page-break-after: always;
+    padding-top: 3.8cm;
+    text-align: center;
+  }
+  .badge-tag {
+    display: inline-block;
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    font-size: 9pt;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-size: 26pt;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+  }
+  .cover h2 {
+    font-size: 14pt;
+    font-weight: 700;
+    color: #d97706;
+    margin: 0 0 25px 0;
+  }
+  .cover-desc {
+    font-size: 10.5pt;
+    color: #334155;
+    max-width: 580px;
+    margin: 0 auto 40px auto;
+    line-height: 1.6;
+  }
+  .meta-card {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: inline-block;
+    text-align: left;
+    width: 480px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .meta-card table {
+    width: 100%;
+    font-size: 9pt;
+    border-collapse: collapse;
+  }
+  .meta-card td {
+    padding: 4px 6px;
+  }
+  .meta-card td.lbl {
+    font-weight: 700;
+    color: #1e293b;
+    width: 38%;
+  }
+
+  h2.sec-title {
+    font-size: 14pt;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 2px solid #d97706;
+    padding-bottom: 4px;
+    margin-top: 26px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  h3.tbl-title {
+    font-size: 11pt;
+    font-weight: 800;
+    color: #1e293b;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin: 0 0 8px 0;
+    color: #334155;
+  }
+
+  .box-rationale {
+    background-color: #fffbeb;
+    border-left: 3.5px solid #d97706;
+    padding: 8px 12px;
+    margin: 8px 0 14px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .box-rationale .title {
+    font-weight: 800;
+    color: #92400e;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .box-rationale p {
+    color: #78350f;
+    margin: 0;
+    font-size: 8.5pt;
+    line-height: 1.4;
+  }
+
+  .box-audit {
+    background-color: #f0fdf4;
+    border-left: 3.5px solid #16a34a;
+    padding: 8px 12px;
+    margin: 8px 0 14px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .box-audit .title {
+    font-weight: 800;
+    color: #166534;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .box-audit p {
+    color: #14532d;
+    margin: 0;
+    font-size: 8.5pt;
+    line-height: 1.4;
+  }
+
+  table.data-dict {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    font-size: 8pt;
+    page-break-inside: avoid;
+  }
+  table.data-dict th {
+    background-color: #1e293b;
+    color: #f8fafc;
+    text-align: left;
+    padding: 5px 8px;
+    font-weight: 700;
+    border: 1px solid #1e293b;
+  }
+  table.data-dict td {
+    padding: 4.5px 8px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  table.data-dict tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  .c-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 700;
+    color: #0f172a;
+    white-space: nowrap;
+  }
+  .c-type {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 600;
+    color: #b45309;
+    white-space: nowrap;
+  }
+  .badge-pk {
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-size: 6.5pt;
+    font-weight: 800;
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  .badge-fk {
+    background-color: #e0e7ff;
+    color: #3730a3;
+    font-size: 6.5pt;
+    font-weight: 800;
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  .badge-gen {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+    font-size: 6.5pt;
+    font-weight: 800;
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  .badge-idx {
+    background-color: #e2e8f0;
+    color: #334155;
+    font-size: 6.5pt;
+    font-weight: 800;
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+
+  .code-block {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 7.5pt;
+    color: #0f172a;
+    margin: 6px 0 10px 0;
+    overflow-x: hidden;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div class="cover">
+  <div class="badge-tag">Especificación de Ingeniería de Software</div>
+  <h1>ConstruyeWeb</h1>
+  <h2>Diccionario de Datos Exhaustivo y Decisiones de Arquitectura</h2>
+  <div class="cover-desc">
+    Desglose integral del script de base de datos relacional <code>backend/schema_construyeweb.sql</code>.
+    Análisis de normalización desde el inventario base (6,952 ítems), tipos de datos de precisión fija,
+    auditoría inmutable de inventario (Kardex), políticas de concurrencia y modelo transaccional.
+  </div>
+
+  <div class="meta-card">
+    <table>
+      <tr>
+        <td class="lbl">Sistema:</td>
+        <td>Plataforma E-Commerce, Inventario y POS Ferretero</td>
+      </tr>
+      <tr>
+        <td class="lbl">Motor de Base de Datos:</td>
+        <td>PostgreSQL 16+ (Cumplimiento ACID Estricto)</td>
+      </tr>
+      <tr>
+        <td class="lbl">Autoría y Diseño BD:</td>
+        <td>Jonathan Manzanares (Modelado PostgreSQL & Frontend Next.js)</td>
+      </tr>
+      <tr>
+        <td class="lbl">Backend y Negocio:</td>
+        <td>Elizabeth (Django REST Framework & Panel POS)</td>
+      </tr>
+      <tr>
+        <td class="lbl">Fuente de Verdad DDL:</td>
+        <td><code>backend/schema_construyeweb.sql</code> (269 líneas)</td>
+      </tr>
+      <tr>
+        <td class="lbl">Fecha de Emisión:</td>
+        <td>Septiembre 2026</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- SECCIÓN 1 -->
+<h2 class="sec-title">1. Contexto del Negocio y Normalización del Inventario</h2>
+
+<p>
+El punto de partida del proyecto fue un inventario comercial plano contenido en el archivo <code>INVENTARIO_FERRETERIA_CONSTRUYE.xlsx</code> con <strong>6,952 filas de productos</strong>. Dicho archivo reflejaba los vicios clásicos de los reportes tabulares operativos:
+</p>
+<ul style="margin: 0 0 10px 0; padding-left: 20px; font-size: 8.5pt;">
+  <li><strong>Desnormalización severa:</strong> Categoría, Subcategoría y Clase estaban forzadas en 3 columnas estáticas. De las 6,952 filas, exactamente <strong>6,945 productos no tenían categoría asignada</strong>.</li>
+  <li><strong>Monocódigo de barras:</strong> Una sola columna para código de barras, imposibilitando distinguir entre la venta de un tornillo suelto, una caja de 100 unidades o un bulto mayorista.</li>
+  <li><strong>Puntos de Venta (PDV) como texto:</strong> No existía aislamiento de stock por sucursal física; las existencias estaban centralizadas en un único número plano sin trazabilidad territorial.</li>
+  <li><strong>Sobrescritura de precios:</strong> Los costos y precios de venta eran celdas modificables directamente, borrando el historial de costos de adquisición pasados.</li>
+</ul>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 1.1: Migración a Tercera Forma Normal (3NF) y Nullability Estratégico</div>
+  <p>
+    El esquema descompuso el reporte plano en 15 tablas interrelacionadas. Crucialmente, el atributo <code>productos.categoria_id</code> se definió como <code>NULLABLE</code>. Si se hubiese definido como <code>NOT NULL</code>, la importación de los 6,945 artículos sin categorizar habría fallado por violación de integridad. Esto permite importar todo el catálogo de inmediato y categorizar progresivamente desde Django Admin.
+  </p>
+</div>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 1.2: Erradicación de Tipos Flotantes — Precisión Fija NUMERIC</div>
+  <p>
+    Bajo ninguna circunstancia se utilizan tipos IEEE 754 (<code>FLOAT</code>, <code>REAL</code> o <code>DOUBLE PRECISION</code>). En el comercio ferretero nicaragüense, los márgenes de ganancia y el IVA (15%) exigen precisión contable absoluta. Se establecieron dos escalas fijas:
+    <br>• <code>NUMERIC(14,4)</code>: Para costos de compra, precios base y cálculos de IVA. Cuatro decimales protegen contra errores de redondeo acumulativo al prorratear fletes o descuentos por volumen.
+    <br>• <code>NUMERIC(14,2)</code> y <code>NUMERIC(12,2)</code>: Para totales finales facturados, inventario físico y cantidades comerciales.
+  </p>
+</div>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 1.3: Extensiones PostgreSQL (pg_trgm y citext)</div>
+  <p>
+    El DDL arranca ejecutando <code>CREATE EXTENSION IF NOT EXISTS pg_trgm;</code> y <code>CREATE EXTENSION IF NOT EXISTS citext;</code>.
+    <br>• <code>pg_trgm</code> permite búsquedas difusas mediante trigramas (índices GIN). En ferretería, los clientes suelen buscar "esmeril" o "taladro dewalt" con errores tipográficos; el índice <code>idx_productos_nombre_trgm</code> evalúa la similitud en milisegundos.
+    <br>• <code>citext</code> proporciona tipos de texto que comparan caracteres sin distinguir mayúsculas ni minúsculas. Se aplica en <code>clientes.email</code> y <code>proveedores.email</code>, impidiendo registros duplicados por variaciones de caja.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECCIÓN 2 -->
+<h2 class="sec-title">2. Catálogo y Entidades Maestras (DDL Detallado)</h2>
+
+<h3 class="tbl-title">2.1. Tabla <code>categorias</code></h3>
+<p>Estructura jerárquica para la clasificación de productos.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador único numérico de 64 bits según estándar SQL:2003.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(150)</td>
+      <td>NOT NULL</td>
+      <td>Nombre de la categoría (ej. "Tornillería y Fijación").</td>
+    </tr>
+    <tr>
+      <td class="c-name">slug</td>
+      <td class="c-type">VARCHAR(160)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>Identificador URL-friendly indexado para rutas en Next.js (ej. <code>/categoria/tornilleria</code>).</td>
+    </tr>
+    <tr>
+      <td class="c-name">categoria_padre_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> <span class="badge-idx">INDEX</span> ON DELETE RESTRICT</td>
+      <td>Auto-referencia a <code>categorias(id)</code>. Admite NULL si es categoría raíz (nivel 0).</td>
+    </tr>
+    <tr>
+      <td class="c-name">nivel</td>
+      <td class="c-type">SMALLINT</td>
+      <td>NOT NULL DEFAULT 0</td>
+      <td>Profundidad del nodo (0=Raíz, 1=Subcategoría, 2=Clase). Optimiza renderizado en frontend.</td>
+    </tr>
+    <tr>
+      <td class="c-name">activo</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT TRUE</td>
+      <td>Bandera de baja lógica para ocultar ramas completas del árbol sin destruir datos.</td>
+    </tr>
+    <tr>
+      <td class="c-name">UNIQUE</td>
+      <td class="c-type">Constraint</td>
+      <td>(nombre, categoria_padre_id)</td>
+      <td><strong>Clave compuesta única:</strong> Prohíbe dos categorías con el mismo nombre bajo el mismo padre, pero permite repetir nombres bajo padres distintos.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 2.1: Árbol Auto-Referenciado vs Modelo Plano</div>
+  <p>
+    En lugar de crear 3 tablas separadas (Categorías, Subcategorías, Clases) o 3 columnas fijas en producto, un árbol auto-referenciado con <code>categoria_padre_id</code> soporta N niveles de profundidad sin alterar la estructura física de la base de datos. El índice <code>idx_categorias_padre</code> garantiza que las consultas recursivas (Common Table Expressions - CTE) se ejecuten en tiempo logarítmico.
+  </p>
+</div>
+
+<h3 class="tbl-title">2.2. Tabla <code>marcas</code></h3>
+<p>Registro de fabricantes y marcas comerciales distribuidas en la ferretería.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador primario de la marca.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(120)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>Nombre de la marca comercial (Stanley, DeWalt, Truper, Bosch, Holcim).</td>
+    </tr>
+    <tr>
+      <td class="c-name">slug</td>
+      <td class="c-type">VARCHAR(130)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>Identificador textual para filtrado directo en la tienda web (ej. <code>/?marca=dewalt</code>).</td>
+    </tr>
+    <tr>
+      <td class="c-name">logo_url</td>
+      <td class="c-type">TEXT</td>
+      <td>NULLABLE</td>
+      <td>Ruta hacia el activo gráfico del fabricante para carruseles de marca en portada.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">2.3. Tabla <code>unidades_medida</code></h3>
+<p>Catálogo de unidades de venta y control físico de existencias.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador de la unidad.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(60)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>Nombre completo (UNIDAD, GALON, PAR, METRO, KILOGRAMO, BOLSA).</td>
+    </tr>
+    <tr>
+      <td class="c-name">abreviatura</td>
+      <td class="c-type">VARCHAR(15)</td>
+      <td>NOT NULL</td>
+      <td>Símbolo estándar para recibos y fichas técnicas (und, gal, m, kg).</td>
+    </tr>
+    <tr>
+      <td class="c-name">es_fraccionable</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT FALSE</td>
+      <td><strong>Regla de negocio crítica:</strong> Autoriza o prohíbe la venta en números decimales.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 2.3: La Lógica de Fraccionamiento Ferretero</div>
+  <p>
+    En retail general, casi todo se vende en enteros. En una ferretería coexisten artículos discretos (no se puede vender 0.5 martillos ni 1.3 serruchos) con artículos a granel (se despachan 2.5 kg de clavos de 2", 15.5 metros de cable THHN calibre 12, o 0.5 galones de thinner). El atributo <code>es_fraccionable</code> es consultado por Next.js para renderizar inputs numéricos de tipo <code>step="0.01"</code> vs <code>step="1"</code>, y por Django para validar que nadie agregue fracciones de artículos indivisibles.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
+<h3 class="tbl-title">2.4. Tabla <code>proveedores</code></h3>
+<p>Entidades comerciales de aprovisionamiento y distribución mayorista.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador de proveedor.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(200)</td>
+      <td>NOT NULL</td>
+      <td>Razón social de la empresa proveedora.</td>
+    </tr>
+    <tr>
+      <td class="c-name">codigo_fiscal</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NULLABLE</td>
+      <td>RUC o identificador tributario para emisión de órdenes de compra y retenciones de ley.</td>
+    </tr>
+    <tr>
+      <td class="c-name">telefono</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NULLABLE</td>
+      <td>Teléfono de contacto comercial.</td>
+    </tr>
+    <tr>
+      <td class="c-name">email</td>
+      <td class="c-type">CITEXT</td>
+      <td>NULLABLE</td>
+      <td>Correo de pedidos insensible a mayúsculas/minúsculas.</td>
+    </tr>
+    <tr>
+      <td class="c-name">activo</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT TRUE</td>
+      <td>Permite inhabilitar compras a proveedores dados de baja.</td>
+    </tr>
+    <tr>
+      <td class="c-name">created_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Fecha de registro en el sistema con huso horario explícito.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">2.5. Tabla <code>sucursales</code></h3>
+<p>Modelado de puntos de venta físicos y bodegas de despacho.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador de la sucursal.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(120)</td>
+      <td>NOT NULL</td>
+      <td>Nombre comercial de la tienda (reemplaza la columna plana "PDV" del Excel original).</td>
+    </tr>
+    <tr>
+      <td class="c-name">direccion</td>
+      <td class="c-type">TEXT</td>
+      <td>NULLABLE</td>
+      <td>Dirección física mostrada al cliente cuando elige la modalidad "Retiro en Tienda".</td>
+    </tr>
+    <tr>
+      <td class="c-name">telefono</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NULLABLE</td>
+      <td>Línea fija o móvil de atención al cliente de la tienda física.</td>
+    </tr>
+    <tr>
+      <td class="c-name">es_bodega_ecommerce</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT FALSE</td>
+      <td><strong>Bandera de orquestación:</strong> Especifica cuál sucursal centraliza el despacho a domicilio del e-commerce.</td>
+    </tr>
+    <tr>
+      <td class="c-name">activo</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT TRUE</td>
+      <td>Permite cerrar temporalmente sucursales por inventario o reformas.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 2.5: Aislamiento del Despacho Web con es_bodega_ecommerce</div>
+  <p>
+    Cuando un usuario realiza un pedido con envío a domicilio en Next.js, el backend necesita saber contra qué inventario físico descontar y desde qué punto sale el camión ferretero. En lugar de inventar una bodega virtual que distorsione la contabilidad, se marca una sucursal real con <code>es_bodega_ecommerce = true</code>, permitiendo que la tienda online opere con stock garantizado sin desabastecer cajas físicas imprevistamente.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECCIÓN 3 -->
+<h2 class="sec-title">3. Artículos, Variantes y Multimedia (DDL Detallado)</h2>
+
+<h3 class="tbl-title">3.1. Tipo ENUM: <code>estado_producto</code></h3>
+<div class="code-block">CREATE TYPE estado_producto AS ENUM ('activo', 'inactivo', 'descontinuado');</div>
+<p>Controla el ciclo de vida del ítem. <code>inactivo</code> lo oculta temporalmente; <code>descontinuado</code> bloquea nuevas órdenes de compra a proveedores mientras permite liquidar el stock remanente en piso de venta.</p>
+
+<h3 class="tbl-title">3.2. Tabla <code>productos</code></h3>
+<p>Entidad central del modelo de negocio ferretero.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Clave subrogada artificial de alto rendimiento para joins internos.</td>
+    </tr>
+    <tr>
+      <td class="c-name">codigo_producto</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td><strong>Clave natural del negocio:</strong> El "Código Producto" original del Excel (SKU interno).</td>
+    </tr>
+    <tr>
+      <td class="c-name">codigo_fabricante</td>
+      <td class="c-type">VARCHAR(60)</td>
+      <td>NULLABLE</td>
+      <td>Part number del fabricante (ej. "DW-2401"). Utilizado en garantías oficiales.</td>
+    </tr>
+    <tr>
+      <td class="c-name">codigo_fiscal</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NULLABLE</td>
+      <td>Clasificación arancelaria centroamericana (SAC) para auditoría fiscal aduanera.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(250)</td>
+      <td>NOT NULL</td>
+      <td>Denominación técnica completa (ej. "Martillo Stanley 16oz Mango Fibra Vidrio").</td>
+    </tr>
+    <tr>
+      <td class="c-name">slug</td>
+      <td class="c-type">VARCHAR(260)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>URL canónica en Next.js (ej. <code>/productos/martillo-stanley-16oz</code>).</td>
+    </tr>
+    <tr>
+      <td class="c-name">descripcion</td>
+      <td class="c-type">TEXT</td>
+      <td>NULLABLE</td>
+      <td>Especificaciones técnicas, voltajes, dimensiones y compatibilidades de obra.</td>
+    </tr>
+    <tr>
+      <td class="c-name">marca_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> <span class="badge-idx">INDEX</span> NOT NULL</td>
+      <td>Referencia obligatoria a <code>marcas(id)</code>. Todo producto pertenece a una marca.</td>
+    </tr>
+    <tr>
+      <td class="c-name">categoria_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> <span class="badge-idx">INDEX</span> NULLABLE</td>
+      <td>Referencia a <code>categorias(id)</code>. Nullable para absorción del Excel sin errores.</td>
+    </tr>
+    <tr>
+      <td class="c-name">unidad_medida_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> NOT NULL</td>
+      <td>Referencia a <code>unidades_medida(id)</code>. Gobierna la regla de fraccionamiento.</td>
+    </tr>
+    <tr>
+      <td class="c-name">proveedor_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> NULLABLE</td>
+      <td>Distribuidor habitual para generación de órdenes de compra.</td>
+    </tr>
+    <tr>
+      <td class="c-name">estado</td>
+      <td class="c-type">estado_producto</td>
+      <td><span class="badge-idx">INDEX</span> DEFAULT 'activo'</td>
+      <td>Estado de vigencia del artículo.</td>
+    </tr>
+    <tr>
+      <td class="c-name">stock_min</td>
+      <td class="c-type">NUMERIC(12,2)</td>
+      <td>DEFAULT 0</td>
+      <td>Punto de reorden para disparar compras automáticas en Django.</td>
+    </tr>
+    <tr>
+      <td class="c-name">stock_max</td>
+      <td class="c-type">NUMERIC(12,2)</td>
+      <td>NULLABLE</td>
+      <td>Capacidad máxima de almacenaje físico para evitar sobrecostos de bodega.</td>
+    </tr>
+    <tr>
+      <td class="c-name">publicado_ecommerce</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT FALSE</td>
+      <td><strong>Filtro de seguridad:</strong> El admin decide qué artículos mostrar en la tienda web pública.</td>
+    </tr>
+    <tr>
+      <td class="c-name">created_at / updated_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Marcas de tiempo automáticas actualizadas mediante trigger PL/pgSQL.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">3.3. Índices Estratégicos sobre <code>productos</code></h3>
+<div class="code-block">
+CREATE INDEX idx_productos_marca ON productos(marca_id);
+CREATE INDEX idx_productos_categoria ON productos(categoria_id);
+CREATE INDEX idx_productos_estado ON productos(estado);
+CREATE INDEX idx_productos_nombre_trgm ON productos USING GIN (nombre gin_trgm_ops);
+</div>
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 3.3: Índice GIN Trigram para el Buscador Web</div>
+  <p>
+    En un catálogo de 7,000 productos con nombres largos y combinaciones de números y medidas ("Tornillo Hex 1/4 x 2"), una búsqueda estándar con <code>LIKE '%termino%'</code> ejecuta un escaneo secuencial (Seq Scan) que castiga al servidor de base de datos. El índice <code>idx_productos_nombre_trgm</code> utiliza el operador de trigramas de PostgreSQL para resolver búsquedas difusas instantáneamente por índice GIN invertido.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
+<h3 class="tbl-title">3.4. Tabla <code>producto_codigos_barra</code></h3>
+<p>Múltiples códigos de barras asociados a diferentes presentaciones de empaque.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador único del registro de código.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE CASCADE</td>
+      <td>Producto al que corresponde el código. Si se borra el producto, se eliminan sus códigos.</td>
+    </tr>
+    <tr>
+      <td class="c-name">codigo_barras</td>
+      <td class="c-type">VARCHAR(60)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>Cadena numérica o alfanumérica escaneable por lectores ópticos (EAN-13, UPC-A, Code 128).</td>
+    </tr>
+    <tr>
+      <td class="c-name">presentacion</td>
+      <td class="c-type">VARCHAR(40)</td>
+      <td>DEFAULT 'unidad'</td>
+      <td>Tipo de empaque asociado al código (<code>unidad</code>, <code>caja_12</code>, <code>caja_100</code>, <code>bulto</code>, <code>pallet</code>).</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-rationale">
+  <div class="title">Decisión de Diseño 3.4: Cardinalidad 1 a N en Códigos de Barra</div>
+  <p>
+    El Excel original existía una sola columna de código de barras. Esto rompía la operación en caja física: cuando un cliente compra una caja entera de bombillos LED o un paquete de 100 tornillos, el cajero escanea el código exterior de la caja, no abre la caja para escanear una pieza individual. Al modelar una tabla 1:N con campo <code>presentacion</code>, el sistema POS de Elizabeth puede reconocer cualquier empaque y realizar la equivalencia correspondiente de forma inmediata.
+  </p>
+</div>
+
+<h3 class="tbl-title">3.5. Tabla <code>producto_imagenes</code></h3>
+<p>Galería multimedia para la presentación de productos en el catálogo de Next.js.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador de la imagen.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE CASCADE</td>
+      <td>Producto al que pertenece la imagen fotográfica.</td>
+    </tr>
+    <tr>
+      <td class="c-name">url</td>
+      <td class="c-type">TEXT</td>
+      <td>NOT NULL</td>
+      <td>URL del archivo multimedia almacenado en CDN, bucket S3 o servidor local.</td>
+    </tr>
+    <tr>
+      <td class="c-name">orden</td>
+      <td class="c-type">SMALLINT</td>
+      <td>NOT NULL DEFAULT 0</td>
+      <td><strong>Prioridad de visualización:</strong> <code>orden = 0</code> define la imagen principal de la tarjeta.</td>
+    </tr>
+    <tr>
+      <td class="c-name">alt_text</td>
+      <td class="c-type">VARCHAR(200)</td>
+      <td>NULLABLE</td>
+      <td>Texto alternativo para lectores de pantalla (accesibilidad web) y posicionamiento SEO.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- SECCIÓN 4 -->
+<h2 class="sec-title">4. Precios, Fiscalidad y Vista de Tarifas Vigentes</h2>
+
+<h3 class="tbl-title">4.1. Tabla <code>producto_precios</code></h3>
+<p>Historial inmutable de precios y costos según el patrón Slowly Changing Dimensions (SCD Tipo 2).</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Clave primaria del registro histórico de precio.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE CASCADE</td>
+      <td>Producto sujeto a la tarifa.</td>
+    </tr>
+    <tr>
+      <td class="c-name">costo_promedio</td>
+      <td class="c-type">NUMERIC(14,4)</td>
+      <td>CHECK (costo_promedio >= 0)</td>
+      <td>Costo Promedio Ponderado (CPP) en libros contables tras compras de reposición.</td>
+    </tr>
+    <tr>
+      <td class="c-name">precio_sin_iva</td>
+      <td class="c-type">NUMERIC(14,4)</td>
+      <td>CHECK (precio_sin_iva >= 0)</td>
+      <td>Precio base neto al público antes de impuestos.</td>
+    </tr>
+    <tr>
+      <td class="c-name">porcentaje_iva</td>
+      <td class="c-type">NUMERIC(5,2)</td>
+      <td>NOT NULL DEFAULT 0</td>
+      <td>Tasa impositiva (ej. 15.00% en Nicaragua, o 0% si el rubro goza de exención fiscal).</td>
+    </tr>
+    <tr>
+      <td class="c-name">precio_con_iva</td>
+      <td class="c-type">NUMERIC(14,4)</td>
+      <td><span class="badge-gen">STORED</span></td>
+      <td><strong>Columna generada físicamente:</strong> <code>(precio_sin_iva * (1 + porcentaje_iva / 100.0))</code>.</td>
+    </tr>
+    <tr>
+      <td class="c-name">vigente_desde</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Marca temporal de inicio de validez de este precio.</td>
+    </tr>
+    <tr>
+      <td class="c-name">vigente_hasta</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NULLABLE</td>
+      <td>Fin de validez. <strong>NULL representa el precio actualmente activo.</strong></td>
+    </tr>
+    <tr>
+      <td class="c-name">creado_por</td>
+      <td class="c-type">VARCHAR(120)</td>
+      <td>NULLABLE</td>
+      <td>Auditoría: Identidad del usuario de Django Admin que autorizó la modificación tarifaria.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">4.2. Índice Único Parcial: <code>idx_precio_vigente_unico</code></h3>
+<div class="code-block">
+CREATE UNIQUE INDEX idx_precio_vigente_unico ON producto_precios(producto_id)
+    WHERE vigente_hasta IS NULL;
+</div>
+<div class="box-audit">
+  <div class="title">Garantía Matemática de Unicidad Temporal</div>
+  <p>
+    ¿Cómo garantiza la base de datos que jamás existan dos precios activos simultáneamente para el mismo producto? Un índice único estándar sobre <code>producto_id</code> impediría guardar el historial. La solución elegante es un <strong>índice parcial</strong> con la cláusula <code>WHERE vigente_hasta IS NULL</code>. Esto permite infinitas filas pasadas con fecha de cierre, pero prohíbe terminantemente insertar una segunda fila activa mientras la anterior no haya sido cerrada formalmente.
+  </p>
+</div>
+
+<h3 class="tbl-title">4.3. Vista de Acceso Rápido: <code>v_precio_actual</code></h3>
+<div class="code-block">
+CREATE VIEW v_precio_actual AS
+    SELECT producto_id, costo_promedio, precio_sin_iva, porcentaje_iva, precio_con_iva
+    FROM producto_precios
+    WHERE vigente_hasta IS NULL;
+</div>
+<p>
+Esta vista desacopla la complejidad del historial temporal respecto a las consultas del frontend. Cuando Next.js o Django REST Framework necesitan los precios vigentes para el catálogo, no ejecutan filtros manuales de fechas: consultan directamente la vista, garantizando velocidad y exactitud.
+</p>
+
+<div class="page-break"></div>
+
+<!-- SECCIÓN 5 -->
+<h2 class="sec-title">5. Inventario Multisucursal y Kardex Inmutable</h2>
+
+<h3 class="tbl-title">5.1. Tabla <code>inventario</code></h3>
+<p>Saldo en caché de existencias por sucursal física para lecturas de alto tráfico.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador del registro de saldo.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> <span class="badge-idx">INDEX</span> ON DELETE CASCADE</td>
+      <td>Producto inventariado.</td>
+    </tr>
+    <tr>
+      <td class="c-name">sucursal_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE RESTRICT</td>
+      <td>Sucursal física que custodia físicamente las unidades.</td>
+    </tr>
+    <tr>
+      <td class="c-name">stock</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>CHECK (stock >= 0)</td>
+      <td>Existencia física real contada en los anaqueles o bodegas.</td>
+    </tr>
+    <tr>
+      <td class="c-name">comprometido</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>CHECK (comprometido >= 0)</td>
+      <td>Unidades apartadas por carritos web en proceso de pago o pedidos pendientes de retiro.</td>
+    </tr>
+    <tr>
+      <td class="c-name">disponible</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td><span class="badge-gen">STORED</span></td>
+      <td><strong>Columna generada físicamente:</strong> <code>(stock - comprometido)</code>. Saldo apto para venta.</td>
+    </tr>
+    <tr>
+      <td class="c-name">updated_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Timestamp de la última alteración de saldo.</td>
+    </tr>
+    <tr>
+      <td class="c-name">Constraint</td>
+      <td class="c-type">UNIQUE</td>
+      <td>(producto_id, sucursal_id)</td>
+      <td><strong>Clave compuesta única:</strong> Un producto solo tiene una fila de saldo por tienda.</td>
+    </tr>
+    <tr>
+      <td class="c-name">Constraint</td>
+      <td class="c-type">CHECK</td>
+      <td>(comprometido &lt;= stock)</td>
+      <td><strong>Blindaje matemático:</strong> Impide que las reservas excedan la existencia física real.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">5.2. Tipo ENUM: <code>tipo_movimiento</code></h3>
+<div class="code-block">
+CREATE TYPE tipo_movimiento AS ENUM
+    ('entrada', 'venta', 'ajuste', 'reserva', 'liberacion_reserva', 'devolucion');
+</div>
+
+<h3 class="tbl-title">5.3. Tabla <code>movimientos_inventario</code> (El Kardex Contable)</h3>
+<p>Bitácora transaccional e inmutable de toda alteración de stock en la empresa.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Número de asiento contable correlativo e inmutable.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> <span class="badge-idx">INDEX</span> NOT NULL</td>
+      <td>Artículo impactado. <strong>Sin CASCADE:</strong> Jamás se borra un movimiento histórico de inventario.</td>
+    </tr>
+    <tr>
+      <td class="c-name">sucursal_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> NOT NULL</td>
+      <td>Sucursal donde ocurrió físicamente el movimiento.</td>
+    </tr>
+    <tr>
+      <td class="c-name">tipo</td>
+      <td class="c-type">tipo_movimiento</td>
+      <td>NOT NULL</td>
+      <td>Naturaleza de la operación (entrada por compra, venta POS, reserva web, etc.).</td>
+    </tr>
+    <tr>
+      <td class="c-name">cantidad</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>NOT NULL</td>
+      <td>Monto algebraico de unidades (positivo para aumentos, negativo para salidas).</td>
+    </tr>
+    <tr>
+      <td class="c-name">referencia</td>
+      <td class="c-type">VARCHAR(80)</td>
+      <td>NULLABLE</td>
+      <td>Documento vinculante (ej. Factura proveedor F-8491, Pedido CW-00123, Ticket POS-12).</td>
+    </tr>
+    <tr>
+      <td class="c-name">usuario</td>
+      <td class="c-type">VARCHAR(120)</td>
+      <td>NULLABLE</td>
+      <td>Auditoría del operador humano o servicio que autorizó el movimiento.</td>
+    </tr>
+    <tr>
+      <td class="c-name">created_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td><span class="badge-idx">INDEX</span> NOT NULL DEFAULT now()</td>
+      <td>Marca de tiempo inmutable para auditorías fiscales.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-audit">
+  <div class="title">La Regla de Oro del Kardex: inventario es la Caché, movimientos es la Verdad</div>
+  <p>
+    En sistemas comerciales robustos, la tabla <code>inventario</code> nunca es la autoridad final: es únicamente una tabla de saldos agregados para que Next.js consulte el stock disponible en 1 milisegundo sin tener que sumar millones de filas. La verdadera autoridad es <code>movimientos_inventario</code>. En caso de discrepancia física o auditoría tributaria, el saldo real de un producto se reconstruye sumando algebraicamente su historial de movimientos.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECCIÓN 6 -->
+<h2 class="sec-title">6. Clientes, Direcciones y Carrito Persistente</h2>
+
+<h3 class="tbl-title">6.1. Tabla <code>clientes</code></h3>
+<p>Cuentas de usuarios compradores del portal e-commerce (separadas del personal administrativo).</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador único de cliente.</td>
+    </tr>
+    <tr>
+      <td class="c-name">nombre</td>
+      <td class="c-type">VARCHAR(150)</td>
+      <td>NOT NULL</td>
+      <td>Nombre y apellidos o razón social para facturación.</td>
+    </tr>
+    <tr>
+      <td class="c-name">email</td>
+      <td class="c-type">CITEXT</td>
+      <td>NOT NULL UNIQUE</td>
+      <td>Correo electrónico validado, insensible a mayúsculas/minúsculas.</td>
+    </tr>
+    <tr>
+      <td class="c-name">telefono</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NULLABLE</td>
+      <td>Teléfono para coordinación de entrega con motorizado o camión.</td>
+    </tr>
+    <tr>
+      <td class="c-name">password_hash</td>
+      <td class="c-type">TEXT</td>
+      <td>NOT NULL</td>
+      <td>Hash criptográfico de contraseña (Argon2 / PBKDF2).</td>
+    </tr>
+    <tr>
+      <td class="c-name">created_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Fecha de registro en la tienda.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">6.2. Tabla <code>direcciones_cliente</code></h3>
+<p>Libreta de destinos de envío para clientes registrados.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador del domicilio.</td>
+    </tr>
+    <tr>
+      <td class="c-name">cliente_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE CASCADE</td>
+      <td>Cliente titular de la dirección.</td>
+    </tr>
+    <tr>
+      <td class="c-name">alias</td>
+      <td class="c-type">VARCHAR(60)</td>
+      <td>NULLABLE</td>
+      <td>Etiqueta descriptiva (ej. "Casa", "Taller", "Obra Carretera Sur").</td>
+    </tr>
+    <tr>
+      <td class="c-name">direccion</td>
+      <td class="c-type">TEXT</td>
+      <td>NOT NULL</td>
+      <td>Texto detallado de la dirección geográfica.</td>
+    </tr>
+    <tr>
+      <td class="c-name">ciudad</td>
+      <td class="c-type">VARCHAR(80)</td>
+      <td>NULLABLE</td>
+      <td>Municipio o departamento (Managua, Masaya, León, Granada).</td>
+    </tr>
+    <tr>
+      <td class="c-name">referencia</td>
+      <td class="c-type">TEXT</td>
+      <td>NULLABLE</td>
+      <td><strong>Contexto geográfico nicaragüense:</strong> Puntos de referencia tradicionales esenciales para mensajería (ej. "De la rotonda 2c abajo, portón negro").</td>
+    </tr>
+    <tr>
+      <td class="c-name">predeterminada</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT FALSE</td>
+      <td>Marca la dirección cargada por defecto al entrar al checkout.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">6.3. Tablas <code>carritos</code> y <code>carrito_items</code></h3>
+<p>Persistencia de canastas de compra tanto para clientes autenticados como para invitados anónimos.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">carritos.cliente_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> NULLABLE</td>
+      <td>Vinculado a <code>clientes(id)</code> si el comprador ha iniciado sesión.</td>
+    </tr>
+    <tr>
+      <td class="c-name">carritos.session_id</td>
+      <td class="c-type">VARCHAR(100)</td>
+      <td>NULLABLE</td>
+      <td>Token transmitido vía cabecera HTTP <code>X-Session-Id</code> para invitados no logueados.</td>
+    </tr>
+    <tr>
+      <td class="c-name">carrito_items.cantidad</td>
+      <td class="c-type">NUMERIC(12,2)</td>
+      <td>CHECK (cantidad > 0)</td>
+      <td>Unidades seleccionadas. Admite decimales según <code>es_fraccionable</code>.</td>
+    </tr>
+    <tr>
+      <td class="c-name">carrito_items.UNIQUE</td>
+      <td class="c-type">Constraint</td>
+      <td>(carrito_id, producto_id)</td>
+      <td>Garantiza que un producto no se duplique en varias filas dentro de la misma canasta.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- SECCIÓN 7 -->
+<h2 class="sec-title">7. Pedidos, Cobros y Snapshot de Facturación</h2>
+
+<h3 class="tbl-title">7.1. Tipo ENUM: <code>estado_pedido</code></h3>
+<div class="code-block">
+CREATE TYPE estado_pedido AS ENUM
+    ('pendiente', 'pagado', 'en_preparacion', 'enviado', 'entregado', 'cancelado');
+</div>
+
+<h3 class="tbl-title">7.2. Tabla <code>pedidos</code></h3>
+<p>Documento formal de venta e-commerce que consolida la transacción.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador secuencial interno de clave primaria.</td>
+    </tr>
+    <tr>
+      <td class="c-name">numero_pedido</td>
+      <td class="c-type">VARCHAR(20)</td>
+      <td>NOT NULL UNIQUE</td>
+      <td><strong>Código visible de cara al cliente:</strong> Folio alfanumérico formateado (ej. "CW-000123").</td>
+    </tr>
+    <tr>
+      <td class="c-name">cliente_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> <span class="badge-idx">INDEX</span> NOT NULL</td>
+      <td>Cliente titular de la compra.</td>
+    </tr>
+    <tr>
+      <td class="c-name">sucursal_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> NOT NULL</td>
+      <td>Sucursal asignada para retiro en tienda o despacho vehicular.</td>
+    </tr>
+    <tr>
+      <td class="c-name">direccion_envio_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> NULLABLE</td>
+      <td>Destino de flete. Permanece NULL si el cliente seleccionó retiro en mostrador.</td>
+    </tr>
+    <tr>
+      <td class="c-name">estado</td>
+      <td class="c-type">estado_pedido</td>
+      <td><span class="badge-idx">INDEX</span> DEFAULT 'pendiente'</td>
+      <td>Etapa de la orden en el ciclo operativo.</td>
+    </tr>
+    <tr>
+      <td class="c-name">subtotal</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>NOT NULL</td>
+      <td>Monto total neto antes de impuestos en Córdobas.</td>
+    </tr>
+    <tr>
+      <td class="c-name">iva_total</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>NOT NULL</td>
+      <td>Impuesto consolidado recaudado (15% ferretero).</td>
+    </tr>
+    <tr>
+      <td class="c-name">total</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>NOT NULL</td>
+      <td>Importe bruto final debitado al comprador.</td>
+    </tr>
+    <tr>
+      <td class="c-name">created_at / updated_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Trazabilidad temporal con trigger automático.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="tbl-title">7.3. Tabla <code>pedido_items</code> (Diseño Inmutable de Facturación)</h3>
+<p>Líneas de detalle con congelamiento de precios en el instante de la transacción.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador de la línea.</td>
+    </tr>
+    <tr>
+      <td class="c-name">pedido_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE CASCADE</td>
+      <td>Pedido al que pertenece este artículo.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE RESTRICT</td>
+      <td>Artículo adquirido. <strong>RESTRICT estricto:</strong> Impide eliminar un producto si ya tiene facturación histórica.</td>
+    </tr>
+    <tr>
+      <td class="c-name">cantidad</td>
+      <td class="c-type">NUMERIC(12,2)</td>
+      <td>CHECK (cantidad > 0)</td>
+      <td>Volumen vendido.</td>
+    </tr>
+    <tr>
+      <td class="c-name">precio_unitario_snapshot</td>
+      <td class="c-type">NUMERIC(14,4)</td>
+      <td>NOT NULL</td>
+      <td><strong>Precio congelado:</strong> Valor unitario pactado al segundo exacto de la compra.</td>
+    </tr>
+    <tr>
+      <td class="c-name">iva_unitario_snapshot</td>
+      <td class="c-type">NUMERIC(14,4)</td>
+      <td>NOT NULL</td>
+      <td>IVA unitario congelado.</td>
+    </tr>
+    <tr>
+      <td class="c-name">subtotal</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td><span class="badge-gen">STORED</span></td>
+      <td><strong>Columna calculada:</strong> <code>(cantidad * precio_unitario_snapshot)</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-rationale">
+  <div class="title">Por qué un JOIN dinámico a producto_precios destruiría la contabilidad</div>
+  <p>
+    Un error común de diseño novato es calcular el importe de un pedido pasado haciendo un <code>JOIN</code> a la tabla de productos o precios actuales. Si hoy un saco de cemento cuesta C$ 360 y dentro de tres meses la inflación lo sube a C$ 420, el JOIN recalcularía hacia arriba las facturas pasadas, alterando las declaraciones fiscales y los recibos de los clientes. El <strong>snapshot de precios</strong> en <code>pedido_items</code> garantiza inmutabilidad legal absoluta.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
+<h3 class="tbl-title">7.4. Tabla <code>pagos</code></h3>
+<p>Registro de transacciones financieras y pasarelas de cobro electrónico.</p>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 22%;">Columna</th>
+      <th style="width: 18%;">Tipo de Dato</th>
+      <th style="width: 20%;">Restricciones</th>
+      <th>Descripción y Justificación Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-pk">PK</span> ALWAYS AS IDENTITY</td>
+      <td>Identificador único del pago.</td>
+    </tr>
+    <tr>
+      <td class="c-name">pedido_id</td>
+      <td class="c-type">BIGINT</td>
+      <td><span class="badge-fk">FK</span> ON DELETE CASCADE</td>
+      <td>Pedido que salda esta transacción.</td>
+    </tr>
+    <tr>
+      <td class="c-name">metodo_pago</td>
+      <td class="c-type">VARCHAR(40)</td>
+      <td>NOT NULL</td>
+      <td>Modalidad utilizada (<code>tarjeta</code> [Stripe], <code>transferencia</code>, <code>efectivo_contraentrega</code>).</td>
+    </tr>
+    <tr>
+      <td class="c-name">monto</td>
+      <td class="c-type">NUMERIC(14,2)</td>
+      <td>NOT NULL</td>
+      <td>Cantidad monetaria efectivamente liquidada.</td>
+    </tr>
+    <tr>
+      <td class="c-name">estado</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NOT NULL DEFAULT 'pendiente'</td>
+      <td>Transición de cobro: <code>pendiente</code>, <code>aprobado</code>, <code>rechazado</code>.</td>
+    </tr>
+    <tr>
+      <td class="c-name">referencia_transaccion</td>
+      <td class="c-type">VARCHAR(120)</td>
+      <td>NULLABLE</td>
+      <td>Identificador devuelto por la pasarela (ej. Stripe <code>PaymentIntent ID: pi_3MtwL24...</code> o voucher bancario).</td>
+    </tr>
+    <tr>
+      <td class="c-name">created_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Marca de tiempo de procesamiento.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box-audit">
+  <div class="title">Integración con Webhooks de Stripe y Transiciones de Estado</div>
+  <p>
+    El frontend en Next.js nunca marca un pedido como <code>pagado</code> de manera unilateral. Cuando el cliente paga con su tarjeta de prueba en Stripe, la pasarela emite un evento asíncrono seguro (webhook <code>payment_intent.succeeded</code>) hacia la API de Django. El backend valida la firma criptográfica del webhook, actualiza <code>pagos.estado = 'aprobado'</code>, transiciona <code>pedidos.estado = 'pagado'</code> y autoriza el movimiento de inventario definitivo (de <code>reserva</code> a <code>venta</code>), liberando las piezas comprometidas.
+  </p>
+</div>
+
+<!-- SECCIÓN 8 -->
+<h2 class="sec-title">8. Automatizaciones en Base de Datos: Triggers PL/pgSQL</h2>
+
+<p>
+Para asegurar que los atributos de auditoría temporal (<code>updated_at</code>) no dependan de la memoria del programador ni puedan ser omitidos por consultas manuales desde herramientas como DBeaver o PgAdmin, la lógica de refresco se ejecuta a nivel de motor mediante un disparador nativo en lenguaje PL/pgSQL:
+</p>
+
+<div class="code-block">
+-- 1. Función disparadora que sobreescribe NEW.updated_at con la marca actual
+CREATE OR REPLACE FUNCTION fn_set_updated_at() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Trigger automático antes de cualquier UPDATE sobre productos
+CREATE TRIGGER trg_productos_updated_at BEFORE UPDATE ON productos
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+-- 3. Trigger automático antes de cualquier UPDATE sobre pedidos
+CREATE TRIGGER trg_pedidos_updated_at BEFORE UPDATE ON pedidos
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+</div>
+
+<div class="box-rationale">
+  <div class="title">Por qué un Trigger de Base de Datos supera al auto_now=True del ORM de Django</div>
+  <p>
+    Django posee la opción <code>auto_now=True</code> en sus modelos. Sin embargo, este mecanismo de software tiene una debilidad conocida: solo se ejecuta cuando se llama al método <code>instance.save()</code> de Python. Si un desarrollador o administrador ejecuta un <code>Model.objects.filter(...).update(...)</code> masivo o corre un script SQL directo en el servidor de base de datos, Django <strong>no dispara el auto_now</strong>. El trigger nativo de PostgreSQL en <code>schema_construyeweb.sql</code> actúa a nivel de almacenamiento físico (Before Update), garantizando que jamás exista una fila modificada sin su timestamp real.
+  </p>
+</div>
+
+<!-- SECCIÓN 9: MATRIZ RESUMEN -->
+<h2 class="sec-title">9. Matriz Consolidada de Tablas y Relaciones</h2>
+
+<table class="data-dict">
+  <thead>
+    <tr>
+      <th style="width: 25%;">Tabla</th>
+      <th style="width: 25%;">Módulo Operativo</th>
+      <th style="width: 25%;">Claves Foráneas (FK)</th>
+      <th>Propósito Principal en ConstruyeWeb</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="c-name">categorias</td>
+      <td>Catálogo Maestro</td>
+      <td>categoria_padre_id &rarr; categorias</td>
+      <td>Árbol taxonómico de clasificación ferretera con profundidad dinámica.</td>
+    </tr>
+    <tr>
+      <td class="c-name">marcas</td>
+      <td>Catálogo Maestro</td>
+      <td>—</td>
+      <td>Fabricantes de herramientas y materiales (Stanley, DeWalt, Truper, etc.).</td>
+    </tr>
+    <tr>
+      <td class="c-name">unidades_medida</td>
+      <td>Catálogo Maestro</td>
+      <td>—</td>
+      <td>Control de venta discreta (enteros) vs materiales fraccionables (kilos, metros).</td>
+    </tr>
+    <tr>
+      <td class="c-name">proveedores</td>
+      <td>Cadena de Suministro</td>
+      <td>—</td>
+      <td>Empresas mayoristas para reposición de inventario y órdenes de compra.</td>
+    </tr>
+    <tr>
+      <td class="c-name">sucursales</td>
+      <td>Infraestructura Física</td>
+      <td>—</td>
+      <td>Locales de venta física, bodegas de stock y despacho e-commerce.</td>
+    </tr>
+    <tr>
+      <td class="c-name">productos</td>
+      <td>Núcleo de Inventario</td>
+      <td>marca_id, categoria_id, unidad_medida_id, proveedor_id</td>
+      <td>Entidad central del catálogo maestro ferretero con SKU único.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_codigos_barra</td>
+      <td>Presentación y POS</td>
+      <td>producto_id &rarr; productos</td>
+      <td>Soporte multi-código para unidad suelta, caja y pallet en lectores ópticos.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_imagenes</td>
+      <td>Experiencia E-Commerce</td>
+      <td>producto_id &rarr; productos</td>
+      <td>Galería fotográfica con orden de visualización y metadatos SEO.</td>
+    </tr>
+    <tr>
+      <td class="c-name">producto_precios</td>
+      <td>Finanzas e Impuestos</td>
+      <td>producto_id &rarr; productos</td>
+      <td>Historial inmutable de precios y CPP (SCD Tipo 2) con índice parcial.</td>
+    </tr>
+    <tr>
+      <td class="c-name">inventario</td>
+      <td>Control Multicanal</td>
+      <td>producto_id &rarr; productos, sucursal_id &rarr; sucursales</td>
+      <td>Saldo rápido en caché de stock, reservas y unidades disponibles para venta.</td>
+    </tr>
+    <tr>
+      <td class="c-name">movimientos_inventario</td>
+      <td>Auditoría y Kardex</td>
+      <td>producto_id &rarr; productos, sucursal_id &rarr; sucursales</td>
+      <td>Bitácora inmutable de entradas, ventas, mermas y reservas contables.</td>
+    </tr>
+    <tr>
+      <td class="c-name">clientes</td>
+      <td>Compradores Web</td>
+      <td>—</td>
+      <td>Cuentas de retail electrónico desacopladas de administradores Django.</td>
+    </tr>
+    <tr>
+      <td class="c-name">direcciones_cliente</td>
+      <td>Logística de Flete</td>
+      <td>cliente_id &rarr; clientes</td>
+      <td>Libreta de destinos de envío con puntos de referencia tradicionales.</td>
+    </tr>
+    <tr>
+      <td class="c-name">carritos / items</td>
+      <td>Flujo de Compra</td>
+      <td>cliente_id &rarr; clientes, producto_id &rarr; productos</td>
+      <td>Canastas persistentes para clientes logueados o invitados anónimos.</td>
+    </tr>
+    <tr>
+      <td class="c-name">pedidos</td>
+      <td>Ventas y Facturación</td>
+      <td>cliente_id &rarr; clientes, sucursal_id &rarr; sucursales, direccion_envio_id &rarr; direcciones</td>
+      <td>Cabecera consolidada de la orden de compra con folio formal (CW-XXXXXX).</td>
+    </tr>
+    <tr>
+      <td class="c-name">pedido_items</td>
+      <td>Ventas y Facturación</td>
+      <td>pedido_id &rarr; pedidos, producto_id &rarr; productos</td>
+      <td>Líneas de pedido con congelamiento inmutable de precios pactados (Snapshot).</td>
+    </tr>
+    <tr>
+      <td class="c-name">pagos</td>
+      <td>Pasarela Transaccional</td>
+      <td>pedido_id &rarr; pedidos</td>
+      <td>Liquidación financiera con Stripe Test Mode y confirmación por webhook.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin-top: 30px; text-align: center; font-size: 8pt; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+  <strong>ConstruyeWeb</strong> — Ferretería Construye &copy; 2026. Todos los derechos reservados.
+  <br>Documento generado a partir del esquema DDL <code>backend/schema_construyeweb.sql</code>.
+</div>
+
+</body>
+</html>
