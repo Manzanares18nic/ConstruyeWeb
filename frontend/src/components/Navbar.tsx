@@ -13,11 +13,14 @@ import {
   Phone,
   MapPin,
 } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
   const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
+
+  const { totalItems, openCart } = useCart();
 
   const handleBuscar = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,16 +103,18 @@ export default function Navbar() {
             </Link>
 
             {/* Carrito */}
-            <Link
-              href="/carrito"
-              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold relative group"
+            <button
+              type="button"
+              onClick={openCart}
+              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold relative group cursor-pointer"
+              aria-label="Abrir carrito de compras"
             >
               <ShoppingCart className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline">Carrito</span>
               <span className="bg-amber-500 text-slate-950 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                0
+                {totalItems}
               </span>
-            </Link>
+            </button>
 
             {/* Botón Menú Móvil */}
             <button
@@ -197,6 +202,22 @@ export default function Navbar() {
       {/* Menú desplegable móvil */}
       {menuMovilAbierto && (
         <div className="md:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2">
+          <button
+            type="button"
+            onClick={() => {
+              setMenuMovilAbierto(false);
+              openCart();
+            }}
+            className="w-full flex items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-amber-600 border-b border-slate-100"
+          >
+            <span className="flex items-center gap-2">
+              <ShoppingCart className="w-4 h-4 text-amber-500" />
+              Ver Carrito
+            </span>
+            <span className="bg-amber-500 text-slate-950 text-xs font-bold px-2 py-0.5 rounded-full">
+              {totalItems}
+            </span>
+          </button>
           <Link
             href="/"
             onClick={() => setMenuMovilAbierto(false)}
