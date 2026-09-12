@@ -14,6 +14,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const router = useRouter();
@@ -21,13 +22,14 @@ export default function Navbar() {
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
 
   const { totalItems, openCart } = useCart();
+  const { cliente, isAuthenticated } = useAuth();
 
   const handleBuscar = (e: React.FormEvent) => {
     e.preventDefault();
     if (busqueda.trim()) {
-      router.push(`/?buscar=${encodeURIComponent(busqueda.trim())}`);
+      router.push(`/catalogo?buscar=${encodeURIComponent(busqueda.trim())}`);
     } else {
-      router.push('/');
+      router.push('/catalogo');
     }
   };
 
@@ -93,13 +95,15 @@ export default function Navbar() {
           <div className="flex items-center gap-3 sm:gap-5">
             {/* Enlace Cuenta */}
             <Link
-              href="/cuenta"
+              href={isAuthenticated ? '/cuenta' : '/login'}
               className="flex items-center gap-2 text-slate-700 hover:text-amber-600 transition-colors text-sm font-medium"
             >
               <div className="p-2 rounded-full bg-slate-100 hover:bg-slate-200">
                 <User className="w-5 h-5 text-slate-700" />
               </div>
-              <span className="hidden lg:inline">Mi Cuenta</span>
+              <span className="hidden lg:inline">
+                {isAuthenticated && cliente ? cliente.nombre.split(' ')[0] : 'Mi Cuenta'}
+              </span>
             </Link>
 
             {/* Carrito */}
@@ -157,7 +161,15 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/?categoria=herramientas-manuales"
+                href="/catalogo"
+                className="text-amber-600 font-bold hover:text-amber-700 transition-colors whitespace-nowrap"
+              >
+                Catálogo Completo
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/categorias/herramientas-manuales"
                 className="hover:text-amber-600 transition-colors whitespace-nowrap"
               >
                 Herramientas Manuales
@@ -165,7 +177,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/?categoria=herramientas-electricas"
+                href="/categorias/herramientas-electricas"
                 className="hover:text-amber-600 transition-colors whitespace-nowrap"
               >
                 Herramientas Eléctricas
@@ -173,7 +185,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/?categoria=tornilleria"
+                href="/categorias/tornilleria"
                 className="hover:text-amber-600 transition-colors whitespace-nowrap"
               >
                 Tornillería & Fijación
@@ -181,7 +193,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/?categoria=pinturas-acabados"
+                href="/categorias/pinturas-acabados"
                 className="hover:text-amber-600 transition-colors whitespace-nowrap"
               >
                 Pinturas & Acabados
@@ -189,7 +201,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/?categoria=plomeria-tuberias"
+                href="/categorias/plomeria-tuberias"
                 className="hover:text-amber-600 transition-colors whitespace-nowrap"
               >
                 Plomería
@@ -226,32 +238,39 @@ export default function Navbar() {
             Inicio
           </Link>
           <Link
-            href="/?categoria=herramientas-manuales"
+            href="/catalogo"
+            onClick={() => setMenuMovilAbierto(false)}
+            className="block py-2 text-sm font-bold text-amber-600 hover:text-amber-700"
+          >
+            Catálogo Completo
+          </Link>
+          <Link
+            href="/categorias/herramientas-manuales"
             onClick={() => setMenuMovilAbierto(false)}
             className="block py-2 text-sm text-slate-700 hover:text-amber-600"
           >
             Herramientas Manuales
           </Link>
           <Link
-            href="/?categoria=herramientas-electricas"
+            href="/categorias/herramientas-electricas"
             onClick={() => setMenuMovilAbierto(false)}
             className="block py-2 text-sm text-slate-700 hover:text-amber-600"
           >
             Herramientas Eléctricas
           </Link>
           <Link
-            href="/?categoria=tornilleria"
+            href="/categorias/tornilleria"
             onClick={() => setMenuMovilAbierto(false)}
             className="block py-2 text-sm text-slate-700 hover:text-amber-600"
           >
             Tornillería & Fijación
           </Link>
           <Link
-            href="/cuenta"
+            href={isAuthenticated ? '/cuenta' : '/login'}
             onClick={() => setMenuMovilAbierto(false)}
-            className="block py-2 text-sm font-semibold text-amber-600"
+            className="block py-2 text-sm font-semibold text-slate-900 border-t border-slate-100"
           >
-            Mi Cuenta / Iniciar Sesión
+            {isAuthenticated && cliente ? `Mi Cuenta (${cliente.nombre.split(' ')[0]})` : 'Iniciar Sesión'}
           </Link>
         </div>
       )}

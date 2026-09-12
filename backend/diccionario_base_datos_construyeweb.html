@@ -1129,16 +1129,34 @@ CREATE TYPE tipo_movimiento AS ENUM
       <td>Teléfono para coordinación de entrega con motorizado o camión.</td>
     </tr>
     <tr>
+      <td class="c-name">codigo_fiscal</td>
+      <td class="c-type">VARCHAR(30)</td>
+      <td>NULLABLE</td>
+      <td>RUC de empresa o Cédula ciudadana para emisión de facturas formales con retención tributaria.</td>
+    </tr>
+    <tr>
       <td class="c-name">password_hash</td>
       <td class="c-type">TEXT</td>
       <td>NOT NULL</td>
-      <td>Hash criptográfico de contraseña (Argon2 / PBKDF2).</td>
+      <td>Hash criptográfico de contraseña (Argon2 / PBKDF2) para autenticación JWT en Next.js.</td>
+    </tr>
+    <tr>
+      <td class="c-name">activo</td>
+      <td class="c-type">BOOLEAN</td>
+      <td>NOT NULL DEFAULT TRUE</td>
+      <td>Permite suspender temporalmente el acceso a la cuenta sin borrar el historial de pedidos.</td>
     </tr>
     <tr>
       <td class="c-name">created_at</td>
       <td class="c-type">TIMESTAMPTZ</td>
       <td>NOT NULL DEFAULT now()</td>
       <td>Fecha de registro en la tienda.</td>
+    </tr>
+    <tr>
+      <td class="c-name">updated_at</td>
+      <td class="c-type">TIMESTAMPTZ</td>
+      <td>NOT NULL DEFAULT now()</td>
+      <td>Marca de última modificación del perfil (mantenida por trigger PL/pgSQL).</td>
     </tr>
   </tbody>
 </table>
@@ -1482,6 +1500,10 @@ CREATE TRIGGER trg_productos_updated_at BEFORE UPDATE ON productos
 
 -- 3. Trigger automático antes de cualquier UPDATE sobre pedidos
 CREATE TRIGGER trg_pedidos_updated_at BEFORE UPDATE ON pedidos
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+-- 4. Trigger automático antes de cualquier UPDATE sobre clientes
+CREATE TRIGGER trg_clientes_updated_at BEFORE UPDATE ON clientes
     FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 </div>
 

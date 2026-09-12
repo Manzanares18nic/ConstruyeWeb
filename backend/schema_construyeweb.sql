@@ -176,12 +176,15 @@ CREATE INDEX idx_movimientos_producto ON movimientos_inventario(producto_id, cre
 -- clientes del storefront, independientes del login de administración.
 
 CREATE TABLE clientes (
-    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre      VARCHAR(150) NOT NULL,
-    email       CITEXT NOT NULL UNIQUE,
-    telefono    VARCHAR(30),
-    password_hash TEXT NOT NULL,           -- o usar auth externo (NextAuth/JWT)
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre        VARCHAR(150) NOT NULL,
+    email         CITEXT NOT NULL UNIQUE,
+    telefono      VARCHAR(30),
+    codigo_fiscal VARCHAR(30),             -- RUC o Cédula para facturas y retenciones comerciales
+    password_hash TEXT NOT NULL,           -- hash seguro (bcrypt/argon2) para login JWT
+    activo        BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE direcciones_cliente (
@@ -265,4 +268,6 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_productos_updated_at BEFORE UPDATE ON productos
     FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 CREATE TRIGGER trg_pedidos_updated_at BEFORE UPDATE ON pedidos
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+CREATE TRIGGER trg_clientes_updated_at BEFORE UPDATE ON clientes
     FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();

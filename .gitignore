@@ -1,0 +1,12 @@
+# Entornos y secretos
+.env*
+*.env
+*.local
+
+# Dependencias y logs
+node_modules/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
