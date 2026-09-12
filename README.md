@@ -120,4 +120,40 @@ El flujo de pago del e-commerce se integra formalmente con Stripe operando en mo
 
 Dado que la aplicación se ejecuta localmente en `localhost`, los servidores de Stripe no pueden alcanzar endpoints locales directos (`http://127.0.0.1:8000/`). Durante la evaluación en vivo, se utiliza Stripe CLI para tunelizar los eventos webhook en tiempo real, garantizando la validación asíncrona de transacciones sin requerir despliegue en un servidor público o dominio de producción.
 
+---
 
+## 5. Interfaz de Usuario y Flujo de Compra (Frontend Next.js)
+
+A continuación se documenta el recorrido visual interactivo del portal público de comercio electrónico desarrollado en Next.js:
+
+### 5.1. Catálogo Principal y Tarjeta de Producto
+
+- **Portada y Catálogo General**: Barra superior con buscador en tiempo real, selector de categorías rápidas, banner institucional y cuadrícula de productos con filtros dinámicos.
+  
+  ![Catálogo Principal](images/homepage.png)
+
+- **Componente de Tarjeta de Producto (`ProductCard`)**: Exhibición de marca comercial, código de artículo (`codigo_producto`), indicador visual de stock en tiempo real, precio final con IVA y botón de adición directa.
+
+  ![Tarjeta de Producto](images/productcard.png)
+
+### 5.2. Carrito Deslizante (Slide-over Drawer)
+
+- **Panel Lateral de Compra Rápida**: Se despliega automáticamente al añadir artículos o pulsar el botón del carrito en el Navbar. Permite incrementar/decrementar unidades de forma reactiva, eliminar ítems, visualizar el desglose de subtotal neto e IVA (15%), y avanzar directamente al pago sin perder la vista del catálogo.
+
+  ![Carrito Lateral Desplegable](images/ventanacarrito.png)
+
+### 5.3. Checkout y Pasarela de Pagos (Stripe Test Mode)
+
+- **Formulario de Finalización de Compra**: Selección flexible entre retiro en sucursales físicas (Sucursal Central o Sur) o envío con flete ferretero a domicilio, junto con el resumen financiero auditado.
+
+  ![Pantalla de Checkout](images/checkout.png)
+
+- **Integración con Modo de Pruebas de Stripe**: Campos protegidos para tarjeta de crédito/débito con soporte para tarjetas de prueba estándar (`4242 4242 4242 4242`) y autocompletado para evaluación rápida.
+
+  ![Confirmación de Pago](images/confirmacion.png)
+
+### 5.4. Confirmación de Pedido y Comprobante
+
+- **Recibo Oficial de Compra**: Pantalla de éxito post-pago con número de orden asignado (ej. `CW-XXXXXX`), confirmación de estado `pagado`, reserva atómica de existencias y botón para imprimir el comprobante de compra.
+
+  ![Pedido Confirmado y Recibo](images/pagoexitoso.png)
