@@ -71,22 +71,27 @@ export default function Footer() {
             </h5>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/?categoria=herramientas-manuales" className="hover:text-amber-400 transition-colors">
+                <Link href="/catalogo" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors">
+                  Catálogo Completo
+                </Link>
+              </li>
+              <li>
+                <Link href="/categorias/herramientas-manuales" className="hover:text-amber-400 transition-colors">
                   Herramientas Manuales
                 </Link>
               </li>
               <li>
-                <Link href="/?categoria=herramientas-electricas" className="hover:text-amber-400 transition-colors">
+                <Link href="/categorias/herramientas-electricas" className="hover:text-amber-400 transition-colors">
                   Herramientas Eléctricas
                 </Link>
               </li>
               <li>
-                <Link href="/?categoria=tornilleria" className="hover:text-amber-400 transition-colors">
+                <Link href="/categorias/tornilleria" className="hover:text-amber-400 transition-colors">
                   Tornillería y Fijación
                 </Link>
               </li>
               <li>
-                <Link href="/?categoria=pinturas-acabados" className="hover:text-amber-400 transition-colors">
+                <Link href="/categorias/pinturas-acabados" className="hover:text-amber-400 transition-colors">
                   Pinturas y Brochas
                 </Link>
               </li>
@@ -112,14 +117,28 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Columna 4: Seguridad y Pasarela */}
+          {/* Columna 4: Clientes y Pasarela */}
           <div>
             <h5 className="text-white font-semibold text-xs uppercase tracking-wider mb-4">
-              Transacciones Seguras
+              Portal del Cliente
             </h5>
-            <p className="text-xs text-slate-400 mb-3">
-              Procesamiento de pagos con cifrado extremo a través de Stripe Test Mode.
-            </p>
+            <ul className="space-y-2 text-xs mb-4">
+              <li>
+                <Link href="/cuenta" className="hover:text-amber-400 transition-colors">
+                  Mi Cuenta y Pedidos
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-amber-400 transition-colors">
+                  Acceso a Clientes
+                </Link>
+              </li>
+              <li>
+                <Link href="/checkout" className="hover:text-amber-400 transition-colors">
+                  Caja y Facturación
+                </Link>
+              </li>
+            </ul>
             <div className="inline-block bg-slate-900 border border-slate-800 rounded-md px-3 py-1.5 text-[11px] text-slate-300">
               🔒 Stripe Payments Verified
             </div>

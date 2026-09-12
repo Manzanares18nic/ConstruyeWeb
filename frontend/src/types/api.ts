@@ -91,6 +91,8 @@ export interface Cliente {
   id: number;
   nombre: string;
   email: string;
+  telefono?: string;
+  codigo_fiscal?: string;
 }
 
 export interface AuthResponse {
@@ -102,6 +104,7 @@ export interface RegistroRequest {
   nombre: string;
   email: string;
   password: string;
+  telefono?: string;
 }
 
 export interface LoginRequest {
@@ -114,6 +117,7 @@ export interface Direccion {
   alias: string;
   direccion: string;
   ciudad: string;
+  referencia?: string;
   predeterminada: boolean;
 }
 
@@ -121,6 +125,7 @@ export interface CrearDireccionRequest {
   alias: string;
   direccion: string;
   ciudad: string;
+  referencia?: string;
   predeterminada?: boolean;
 }
 

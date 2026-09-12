@@ -16,6 +16,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CheckoutPage() {
   const {
@@ -26,16 +27,24 @@ export default function CheckoutPage() {
     total,
     clearCart,
   } = useCart();
+  const { cliente, direcciones, guardarPedido } = useAuth();
+
+  const direccionPredeterminada = direcciones.find((d) => d.predeterminada) || direcciones[0];
 
   // Estados del formulario
-  const [nombre, setNombre] = useState('Jonathan Manzanares');
-  const [email, setEmail] = useState('cliente@construyeweb.com');
-  const [telefono, setTelefono] = useState('+505 8888-0000');
+  const [nombre, setNombre] = useState(cliente?.nombre || 'Jonathan Manzanares');
+  const [email, setEmail] = useState(cliente?.email || 'cliente@construyeweb.com');
+  const [telefono, setTelefono] = useState(cliente?.telefono || '+505 8888-0000');
 
   const [modalidadEntrega, setModalidadEntrega] = useState<'sucursal' | 'domicilio'>('sucursal');
   const [sucursalId, setSucursalId] = useState('1');
-  const [direccion, setDireccion] = useState('De la rotonda El Güegüense 2c abajo');
-  const [ciudad, setCiudad] = useState('Managua');
+  const [direccion, setDireccion] = useState(
+    direccionPredeterminada?.direccion || 'De la rotonda El Güegüense 2c abajo'
+  );
+  const [ciudad, setCiudad] = useState(direccionPredeterminada?.ciudad || 'Managua');
+  const [referencia, setReferencia] = useState(
+    direccionPredeterminada?.referencia || 'Portón negro frente a pulpería La Bendición'
+  );
 
   const [metodoPago, setMetodoPago] = useState<'tarjeta' | 'contra_entrega'>('tarjeta');
   const [tarjetaNumero, setTarjetaNumero] = useState('4242 •••• •••• 4242');
@@ -80,6 +89,30 @@ export default function CheckoutPage() {
       sucursalId === '1'
         ? 'Sucursal Central (Km 4.5 Carretera Norte)'
         : 'Sucursal Sur (Carretera a Masaya Km 11)';
+
+    const pedidoGeneradoObj = {
+      numero_pedido: numeroPedidoGenerado,
+      fecha: fechaActual,
+      estado: 'pagado' as const,
+      metodo_pago: metodoPago === 'tarjeta' ? 'Tarjeta (Stripe Test)' : 'Contra entrega',
+      modalidad_entrega: modalidadEntrega,
+      destino_entrega: modalidadEntrega === 'sucursal' ? sucursalTexto : `${direccion}, ${ciudad}`,
+      referencia_entrega: modalidadEntrega === 'domicilio' ? referencia : undefined,
+      subtotal: subtotalNeto,
+      iva_total: ivaTotal,
+      total,
+      items: items.map((it) => ({
+        producto_id: it.id,
+        nombre: it.nombre,
+        slug: it.slug,
+        cantidad: it.cantidad,
+        precio_unitario: it.precio_unitario,
+        subtotal: it.subtotal,
+        imagen_principal: it.imagen_principal,
+      })),
+    };
+
+    guardarPedido(pedidoGeneradoObj);
 
     setOrderCompleted({
       numero_pedido: numeroPedidoGenerado,
@@ -206,22 +239,32 @@ export default function CheckoutPage() {
           </div>
 
           {/* Acciones */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-slate-200">
             <button
               onClick={() => window.print()}
-              className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors"
+              className="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
-              <span>Imprimir Recibo</span>
+              <span>Imprimir</span>
             </button>
 
-            <Link
-              href="/"
-              className="w-full sm:w-auto px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors"
-            >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Volver a la Tienda</span>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <Link
+                href={`/pedido/${orderCompleted.numero_pedido}`}
+                className="w-full sm:w-auto px-5 py-2.5 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors shadow-xs"
+              >
+                <span>Ver Tracking y Comprobante</span>
+                <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+              </Link>
+
+              <Link
+                href="/"
+                className="w-full sm:w-auto px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Volver a la Tienda</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
