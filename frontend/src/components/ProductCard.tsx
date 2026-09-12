@@ -1,14 +1,28 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, CheckCircle2, XCircle } from 'lucide-react';
+import { ShoppingCart, CheckCircle2, XCircle, Check } from 'lucide-react';
 import { ProductoResumen } from '@/types/api';
+import { useCart } from '@/context/CartContext';
 
 interface ProductCardProps {
   producto: ProductoResumen;
 }
 
 export default function ProductCard({ producto }: ProductCardProps) {
+  const { addToCart } = useCart();
+  const [agregado, setAgregado] = useState(false);
+
+  const handleAgregar = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!producto.disponible) return;
+
+    addToCart(producto, 1);
+    setAgregado(true);
+    setTimeout(() => setAgregado(false), 1500);
+  };
   return (
     <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-amber-400 transition-all duration-200 flex flex-col">
       {/* Contenedor de Imagen */}
@@ -85,13 +99,33 @@ export default function ProductCard({ producto }: ProductCardProps) {
             </div>
           </div>
 
-          <Link
-            href={`/productos/${producto.slug}`}
-            className="px-3 py-2 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs shrink-0"
-          >
-            <ShoppingCart className="w-3.5 h-3.5" />
-            <span>Ver</span>
-          </Link>
+          {producto.disponible ? (
+            <button
+              type="button"
+              onClick={handleAgregar}
+              className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer ${
+                agregado
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950'
+              }`}
+            >
+              {agregado ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>¡Listo!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  <span>Agregar</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <span className="px-3 py-2 bg-slate-100 text-slate-400 rounded-lg text-xs font-semibold shrink-0 cursor-not-allowed">
+              Agotado
+            </span>
+          )}
         </div>
       </div>
     </div>
