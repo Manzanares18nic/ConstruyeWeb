@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Search,
   ShoppingCart,
@@ -18,8 +18,19 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [busqueda, setBusqueda] = useState('');
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
+
+  const subNavLinks = [
+    { href: '/', label: 'Inicio', exact: true },
+    { href: '/catalogo', label: 'Catálogo Completo', exact: true },
+    { href: '/categorias/herramientas-manuales', label: 'Herramientas Manuales' },
+    { href: '/categorias/herramientas-electricas', label: 'Herramientas Eléctricas' },
+    { href: '/categorias/tornilleria', label: 'Tornillería & Fijación' },
+    { href: '/categorias/pinturas-acabados', label: 'Pinturas & Acabados' },
+    { href: '/categorias/plomeria-tuberias', label: 'Plomería' },
+  ];
 
   const { totalItems, openCart } = useCart();
   const { cliente, isAuthenticated } = useAuth();
@@ -153,60 +164,26 @@ export default function Navbar() {
       {/* Sub-barra de categorías rápidas */}
       <nav className="bg-slate-100 border-t border-slate-200 hidden sm:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ul className="flex items-center gap-6 py-2.5 text-xs font-semibold text-slate-700 uppercase tracking-wider overflow-x-auto">
-            <li>
-              <Link href="/" className="hover:text-amber-600 transition-colors">
-                Inicio
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/catalogo"
-                className="text-amber-600 font-bold hover:text-amber-700 transition-colors whitespace-nowrap"
-              >
-                Catálogo Completo
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categorias/herramientas-manuales"
-                className="hover:text-amber-600 transition-colors whitespace-nowrap"
-              >
-                Herramientas Manuales
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categorias/herramientas-electricas"
-                className="hover:text-amber-600 transition-colors whitespace-nowrap"
-              >
-                Herramientas Eléctricas
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categorias/tornilleria"
-                className="hover:text-amber-600 transition-colors whitespace-nowrap"
-              >
-                Tornillería & Fijación
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categorias/pinturas-acabados"
-                className="hover:text-amber-600 transition-colors whitespace-nowrap"
-              >
-                Pinturas & Acabados
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categorias/plomeria-tuberias"
-                className="hover:text-amber-600 transition-colors whitespace-nowrap"
-              >
-                Plomería
-              </Link>
-            </li>
+          <ul className="flex items-center gap-6 py-2.5 text-xs uppercase tracking-wider overflow-x-auto">
+            {subNavLinks.map((link) => {
+              const isActivo = link.exact
+                ? pathname === link.href
+                : pathname === link.href || pathname.startsWith(`${link.href}/`);
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={`whitespace-nowrap pb-1.5 transition-all border-b-2 font-bold ${
+                      isActivo
+                        ? 'text-amber-600 border-amber-500'
+                        : 'text-slate-700 hover:text-amber-600 border-transparent'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </nav>
@@ -230,41 +207,25 @@ export default function Navbar() {
               {totalItems}
             </span>
           </button>
-          <Link
-            href="/"
-            onClick={() => setMenuMovilAbierto(false)}
-            className="block py-2 text-sm font-semibold text-slate-800 hover:text-amber-600"
-          >
-            Inicio
-          </Link>
-          <Link
-            href="/catalogo"
-            onClick={() => setMenuMovilAbierto(false)}
-            className="block py-2 text-sm font-bold text-amber-600 hover:text-amber-700"
-          >
-            Catálogo Completo
-          </Link>
-          <Link
-            href="/categorias/herramientas-manuales"
-            onClick={() => setMenuMovilAbierto(false)}
-            className="block py-2 text-sm text-slate-700 hover:text-amber-600"
-          >
-            Herramientas Manuales
-          </Link>
-          <Link
-            href="/categorias/herramientas-electricas"
-            onClick={() => setMenuMovilAbierto(false)}
-            className="block py-2 text-sm text-slate-700 hover:text-amber-600"
-          >
-            Herramientas Eléctricas
-          </Link>
-          <Link
-            href="/categorias/tornilleria"
-            onClick={() => setMenuMovilAbierto(false)}
-            className="block py-2 text-sm text-slate-700 hover:text-amber-600"
-          >
-            Tornillería & Fijación
-          </Link>
+          {subNavLinks.map((link) => {
+            const isActivo = link.exact
+              ? pathname === link.href
+              : pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuMovilAbierto(false)}
+                className={`block py-2 text-sm transition-colors rounded-md px-2 ${
+                  isActivo
+                    ? 'font-bold text-amber-600 bg-amber-50'
+                    : 'text-slate-700 hover:text-amber-600'
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <Link
             href={isAuthenticated ? '/cuenta' : '/login'}
             onClick={() => setMenuMovilAbierto(false)}
