@@ -269,6 +269,96 @@ export const MOCK_PRODUCTOS_DETALLE: ProductoDetalle[] = [
     disponible: true,
     stock_disponible: 150,
   },
+  {
+    id: 509,
+    codigo_producto: 'FC-00509',
+    nombre: 'Cemento Holcim Fuerte 42.5 kg',
+    descripcion: 'Cemento Portland de uso general para mampostería, vigas, columnas, zapatas y repellos. Alta resistencia mecánica y excelente trabajabilidad.',
+    marca: { id: 1, nombre: 'Holcim' },
+    categoria: { id: 1, nombre: 'Ferretería general', slug: 'ferreteria-general' },
+    precio: {
+      precio_sin_iva: 313.04,
+      porcentaje_iva: 15,
+      precio_con_iva: 360.00,
+    },
+    imagenes: [
+      'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=600&auto=format&fit=crop&q=80',
+    ],
+    disponible: true,
+    stock_disponible: 250,
+  },
+  {
+    id: 510,
+    codigo_producto: 'FC-00510',
+    nombre: 'Bloque de Concreto 4 Pulgadas (10x20x40 cm)',
+    descripcion: 'Bloque hueco de concreto vibrocompactado de alta resistencia para paredes y mampostería estructural o divisoria.',
+    marca: { id: 2, nombre: 'Construye' },
+    categoria: { id: 1, nombre: 'Ferretería general', slug: 'ferreteria-general' },
+    precio: {
+      precio_sin_iva: 20.87,
+      porcentaje_iva: 15,
+      precio_con_iva: 24.00,
+    },
+    imagenes: [
+      'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&auto=format&fit=crop&q=80',
+    ],
+    disponible: true,
+    stock_disponible: 1200,
+  },
+  {
+    id: 511,
+    codigo_producto: 'FC-00511',
+    nombre: 'Pintura Látex Blanco Corona Cubeta 5 Galones',
+    descripcion: 'Pintura látex acrílica lavable para interiores y exteriores. Excelente cubrimiento, secado rápido y protección contra hongos.',
+    marca: { id: 3, nombre: 'Corona' },
+    categoria: { id: 16, nombre: 'Pinturas y Acabados', slug: 'pinturas-acabados' },
+    precio: {
+      precio_sin_iva: 1956.52,
+      porcentaje_iva: 15,
+      precio_con_iva: 2250.00,
+    },
+    imagenes: [
+      'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&auto=format&fit=crop&q=80',
+    ],
+    disponible: true,
+    stock_disponible: 28,
+  },
+  {
+    id: 512,
+    codigo_producto: 'FC-00512',
+    nombre: 'Rodillo para Pintar Truper 9 Pulgadas Antigoteo',
+    descripcion: 'Rodillo profesional de felpa sintética de 9 pulgadas para superficies lisas y semirugosas. Mango ergonómico con rosca para extensión.',
+    marca: { id: 6, nombre: 'Truper' },
+    categoria: { id: 16, nombre: 'Pinturas y Acabados', slug: 'pinturas-acabados' },
+    precio: {
+      precio_sin_iva: 126.09,
+      porcentaje_iva: 15,
+      precio_con_iva: 145.00,
+    },
+    imagenes: [
+      'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&auto=format&fit=crop&q=80',
+    ],
+    disponible: true,
+    stock_disponible: 60,
+  },
+  {
+    id: 513,
+    codigo_producto: 'FC-00513',
+    nombre: 'Cinta de Enmascarar Truper Masking Tape 1 Pulgada',
+    descripcion: 'Cinta de papel crepado adhesivo de alta adherencia para protección de zócalos, esquinas y marcos durante trabajos de pintura.',
+    marca: { id: 6, nombre: 'Truper' },
+    categoria: { id: 16, nombre: 'Pinturas y Acabados', slug: 'pinturas-acabados' },
+    precio: {
+      precio_sin_iva: 56.52,
+      porcentaje_iva: 15,
+      precio_con_iva: 65.00,
+    },
+    imagenes: [
+      'https://images.unsplash.com/photo-1581147036324-c17ac41dfa6c?w=600&auto=format&fit=crop&q=80',
+    ],
+    disponible: true,
+    stock_disponible: 110,
+  },
 ];
 
 // Convertimos los productos detallados al formato de resumen para listados
