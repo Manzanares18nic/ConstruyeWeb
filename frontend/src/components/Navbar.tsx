@@ -66,25 +66,16 @@ export default function Navbar() {
       {/* Barra principal de navegación */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4 md:gap-8">
-          {/* Logotipo Oficial */}
-          <Link href="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xs group-hover:border-amber-500 transition-all shrink-0">
-              <Image
-                src="/logo.jpeg"
-                alt="Ferretería Construye Logo"
-                fill
-                priority
-                className="object-contain p-1"
-              />
-            </div>
-            <div>
-              <span className="text-xl font-black tracking-tight text-slate-900">
-                CONSTRUYE<span className="text-amber-600">WEB</span>
-              </span>
-              <span className="block text-[10px] uppercase font-bold tracking-widest text-slate-500 -mt-1">
-                Ferretería y más...
-              </span>
-            </div>
+          {/* Logotipo Oficial Construye */}
+          <Link href="/" className="flex items-center shrink-0 group py-0.5">
+            <Image
+              src="/logo.png"
+              alt="Ferretería Construye — Ferretería y más..."
+              width={530}
+              height={361}
+              priority
+              className="h-12 sm:h-14 md:h-16 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            />
           </Link>
 
           {/* Buscador de productos */}

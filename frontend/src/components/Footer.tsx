@@ -48,20 +48,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Columna 1: Marca */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white p-1 shadow-xs shrink-0 border border-slate-700">
+            <div className="space-y-3">
+              <div className="inline-block bg-white px-3 py-2 rounded-xl shadow-xs">
                 <Image
-                  src="/logo.jpeg"
-                  alt="Ferretería Construye Logo"
-                  fill
-                  className="object-contain p-0.5"
+                  src="/logo.png"
+                  alt="Ferretería Construye — Ferretería y más..."
+                  width={530}
+                  height={361}
+                  className="h-11 w-auto object-contain"
                 />
-              </div>
-              <div>
-                <span className="text-lg font-black tracking-tight text-white block">
-                  CONSTRUYE<span className="text-amber-500">WEB</span>
-                </span>
-                <span className="text-[10px] text-slate-400 -mt-1 block">Ferretería y más...</span>
               </div>
             </div>
             <p className="text-xs leading-relaxed text-slate-400">

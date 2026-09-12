@@ -145,12 +145,13 @@ export default function PedidoDetallePage({ params }: PedidoPageProps) {
         {/* Cabecera Comercial */}
         <div className="bg-slate-950 text-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white p-1 shadow-xs shrink-0 border border-slate-700">
+            <div className="inline-block bg-white px-2.5 py-1.5 rounded-xl shadow-xs shrink-0">
               <Image
-                src="/logo.jpeg"
-                alt="Ferretería Construye Logo"
-                fill
-                className="object-contain p-0.5"
+                src="/logo.png"
+                alt="Ferretería Construye"
+                width={530}
+                height={361}
+                className="h-11 w-auto object-contain"
               />
             </div>
             <div>

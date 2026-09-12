@@ -48,24 +48,15 @@ export default function RegistroPage() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl border border-slate-200 shadow-sm">
         {/* Cabecera */}
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-3 group mb-4">
-            <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xs group-hover:border-amber-500 transition-all shrink-0">
-              <Image
-                src="/logo.jpeg"
-                alt="Ferretería Construye Logo"
-                fill
-                priority
-                className="object-contain p-1"
-              />
-            </div>
-            <div className="text-left">
-              <span className="text-2xl font-black tracking-tight text-slate-900 block">
-                CONSTRUYE<span className="text-amber-600">WEB</span>
-              </span>
-              <span className="block text-[10px] uppercase font-bold tracking-widest text-slate-500 -mt-1">
-                Ferretería y más...
-              </span>
-            </div>
+          <Link href="/" className="inline-block group mb-4">
+            <Image
+              src="/logo.png"
+              alt="Ferretería Construye — Ferretería y más..."
+              width={530}
+              height={361}
+              priority
+              className="h-16 sm:h-20 w-auto mx-auto object-contain transition-transform group-hover:scale-105"
+            />
           </Link>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             Crear Cuenta de Cliente

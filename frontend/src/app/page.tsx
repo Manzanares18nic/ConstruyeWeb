@@ -31,7 +31,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const buscarFiltro = resolvedParams.buscar;
   const pagina = resolvedParams.pagina ? parseInt(resolvedParams.pagina, 10) : 1;
 
-  // Obtenemos datos desde el cliente de API (con fallback transparente a Mocks)
+  // Obtenemos datos desde el cliente de API (con fallbac1k transparente a Mocks)
   const [productosData, categorias, marcas] = await Promise.all([
     obtenerProductos({
       categoria: categoriaFiltro,
