@@ -101,6 +101,8 @@ El stack elegido responde a criterios estrictos de seguridad por defecto, veloci
 
 El backend expone su API siguiendo el contrato documentado en `api_contract_construyeweb.md`: el panel administrativo (Django Admin) opera server-rendered y **no** pasa por la API REST, mientras que todo lo que consume el frontend público sí lo hace — separación explícita entre los dos frentes de trabajo descritos en 1.2.
 
+Modelado Visual de Base de Datos
+
 ---
 
 ## 4. Pasarela de Pagos: Stripe (Test Mode) & Stripe CLI
