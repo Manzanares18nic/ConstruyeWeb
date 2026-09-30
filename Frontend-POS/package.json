@@ -1,0 +1,11 @@
+{
+  "name": "frontend-pos-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix pos run dev",
+    "build": "npm --prefix pos run build",
+    "start": "npm --prefix pos run start",
+    "lint": "npm --prefix pos run lint"
+  }
+}
